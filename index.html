@@ -7,46 +7,47 @@
 <meta name="description" content="Is there a benchmark for whether an LLM keeps its better recommendation when the user proposes a worse one? Problem definition, related work and current results, November 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #faf9f5; --surface: #f2f0e8; --fg: #141413; --ink2: #52514e; --muted: #87857e; --line: #e2dfd5;
-  --accent: #c2603c;
-  --pos: #2a78d6; --mid: #c4c1b8; --neg: #e34948;
+  --bg: #faf9f5; --surface: #f0eee6; --fg: #141413; --ink2: #4d4c48; --muted: #87867f; --line: #e8e6dc;
+  --accent: #d97757;
+  --pos: #6a9bcc; --mid: #dedbd0; --neg: #d97757;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #1f1e1d; --surface: #2a2927; --fg: #f0efec; --ink2: #c3c2b7; --muted: #8f8d86; --line: #3a3936;
-    --accent: #e08a62;
-    --pos: #3987e5; --mid: #55534e; --neg: #e66767;
+    --bg: #141413; --surface: #232320; --fg: #faf9f5; --ink2: #cfcdc4; --muted: #b0aea5; --line: #33322e;
+    --accent: #d97757;
+    --pos: #6a9bcc; --mid: #5e5d59; --neg: #d97757;
   }
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--bg); color: var(--fg);
-  font: 17px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font: 18px/1.7 Lora, Georgia, serif;
 }
 .col { max-width: 720px; margin: 0 auto; padding: 0 20px; }
 .wide { max-width: 940px; margin: 0 auto; padding: 0 20px; }
 header.col { padding-top: 80px; }
-h1, h2, .def { font-family: "Source Serif 4", Georgia, "Times New Roman", serif; }
-h1 { font-size: 44px; line-height: 1.15; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 22px; }
-h2 { font-size: 28px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin: 72px 0 16px; }
+h1, h2, h3, th, .eyebrow, .fignum, .ctitle, .tag, .legend, .row, .axis, .heat, .scale, .notes h3 { font-family: Poppins, Arial, sans-serif; }
+.def { font-family: Lora, Georgia, serif; font-style: italic; }
+h1 { font-size: 42px; line-height: 1.2; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 22px; }
+h2 { font-size: 26px; line-height: 1.3; font-weight: 500; letter-spacing: -0.01em; margin: 72px 0 16px; }
 .eyebrow { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
 .lead { font-size: 20px; line-height: 1.6; color: var(--ink2); margin: 0; }
 p { margin: 0 0 16px; }
 a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
 sup a { text-decoration: none; color: var(--accent); font-size: 12px; }
 
-.def { font-size: 23px; line-height: 1.5; font-weight: 500; border-left: 3px solid var(--accent); padding: 2px 0 2px 20px; margin: 28px 0; }
+.def { font-size: 22px; line-height: 1.55; font-weight: 400; border-left: 3px solid var(--accent); padding: 2px 0 2px 20px; margin: 28px 0; }
 .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 20px; font-size: 15px; line-height: 1.6; }
 .pair > div { background: var(--surface); border-radius: 8px; padding: 14px 16px; }
 .pair .tag { font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 4px; letter-spacing: 0.02em; }
 .pair mark { background: none; color: var(--accent); font-weight: 600; }
 
 .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table { border-collapse: collapse; width: 100%; font-size: 14.5px; line-height: 1.55; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.55; }
 th, td { padding: 12px 14px 12px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 th { font-size: 12.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; border-bottom: 1px solid var(--fg); }
 td small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
@@ -139,13 +140,8 @@ figure { margin: 36px 0 0; }
   <tbody>
     <tr><td><a href="https://github.com/petergpt/bullshit-benchmark">BullshitBench</a><small>Peter Gostev · open source · live leaderboard</small></td><td>Software, finance, law, medicine, physics</td><td>100 prompts that read like ordinary work requests but rest on a nonsensical premise. Three LLM judges grade each answer as clear pushback, partial challenge or accepted nonsense.</td></tr>
     <tr><td><a href="https://arxiv.org/abs/2609.23939">XYEval</a><small>Google DeepMind · arXiv 2026 · open source</small></td><td>Code, terminal, tool use, customer-service agents, academic QA</td><td>Appends a plausible but wrong "I think…" suggestion to tasks from τ-Bench, SWE-bench, Terminal-Bench, MCP-Atlas and HLE. Each task is scored by its own grader and compared with the unmodified task.</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2609.09090">SPINE</a><small>Texas A&amp;M et al. · arXiv 2026</small></td><td>False presuppositions, unethical requests</td><td>A simulated user insists on a wrong position for up to 25 turns. Measures how often, and after how many turns, the model gives up its correct position.</td></tr>
     <tr><td><a href="https://arxiv.org/abs/2505.23840">SYCON-Bench</a><small>EMNLP 2025 Findings · open source</small></td><td>Debate and other conversations</td><td>Multi-turn free-form dialogue in which the user keeps pressing a stance. Records the turn of the first flip and the number of flips.</td></tr>
-    <tr><td><a href="https://aclanthology.org/2026.findings-acl.1759/">SycoBench-600</a><small>ACL 2026 Findings</small></td><td>Decision support, 8 domains</td><td>600 multiple-choice questions under doubt, authority or an explicit wrong suggestion. Also scores whether the model accepts suggestions that are correct.</td></tr>
     <tr><td><a href="https://arxiv.org/abs/2608.26511">Sycophancy vs. Rational Updating</a><small>EMNLP 2026 Findings · open source</small></td><td>General</td><td>Two-turn setup in which the pushback either lacks support or contains real evidence. Measures yielding and justified updating separately.</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2604.24668">The Price of Agreement</a><small>Writer · ICLR 2026 workshop</small></td><td>Finance (agents)</td><td>Financial agent tasks with user rebuttals or stated preferences that contradict the reference answer. Measures the drop in accuracy.</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2603.03330">Certainty Robustness</a><small>TELUS Digital · arXiv 2026</small></td><td>Math, reasoning</td><td>200 LiveBench questions, each followed by "Are you sure?" or "You are wrong!". Separates justified corrections from unjustified answer changes.</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2502.08177">SycEval</a><small>Stanford · AIES 2025</small></td><td>Math, medicine</td><td>User rebuttals of varying strength after the model answers. Each flip is labeled as moving toward the correct answer or away from it.</td></tr>
     <tr><td><a href="https://arxiv.org/abs/2310.13548">Towards Understanding Sycophancy</a><small>Anthropic · ICLR 2024</small></td><td>General free-form tasks</td><td>Compares answers with and without the user's stated view across four tasks, and shows that human preference data rewards sycophantic answers.</td></tr>
     <tr><td><a href="https://github.com/lechmazur/sycophancy">lechmazur/sycophancy</a><small>Lech Mazur · open source</small></td><td>Everyday interpersonal disputes</td><td>The same dispute is told in the first person from each side. A model counts as sycophantic when it sides with both narrators.</td></tr>
     <tr><td><a href="https://artificialanalysis.ai/evaluations/aa-personalitybench">AA-PersonalityBench</a><small>Artificial Analysis · live leaderboard</small></td><td>General writing style</td><td>Single-turn prompts, some written to invite flattery, with no pushback. LLM judges compare answers pairwise on 30 traits, one of which is "Sycophantic".</td></tr>
@@ -189,7 +185,7 @@ figure { margin: 36px 0 0; }
   <div class="notes">
     <h3>Notes</h3>
     <ol>
-      <li id="n1">Inclusion: each entry has a paper or public code, or comes from a major lab or university. Domains and methods come from each paper's abstract or repository.</li>
+      <li id="n1">Inclusion: each entry has public code or a public leaderboard. Academic work without released code is left out. Domains and methods come from each paper's abstract or repository.</li>
       <li id="n2">From the BullshitBench <a href="https://github.com/petergpt/bullshit-benchmark/blob/main/data/v2/latest/leaderboard.csv">leaderboard.csv</a> (v2.1.7, November 11, 2026). Each rate is the count divided by prompts minus refusals, matching the official dashboard. Each model is shown at its best reasoning setting, and rounding means segments may not sum to 100%. All 250 configurations are in the <a href="https://petergpt.github.io/bullshit-benchmark/viewer/index.html">viewer</a>.</li>
       <li id="n3">From Table 1 of the <a href="https://arxiv.org/html/2609.23939v1">XYEval paper</a>. The average column is the plain mean of the six suites, computed for this page. The mitigation result is from the paper's Table 3. The paper's five models are older than those in Figure 1, so the two figures are not directly comparable.</li>
       <li>Researched and written with AI assistance: Claude for search, checking and writing, and Grok for searching X. Corrections are welcome as <a href="https://github.com/zedong-peng/llm-pushback-survey/issues">issues</a>.</li>
