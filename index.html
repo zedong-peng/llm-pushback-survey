@@ -30,7 +30,7 @@ body {
 .col { max-width: 720px; margin: 0 auto; padding: 0 20px; }
 .wide { max-width: 940px; margin: 0 auto; padding: 0 20px; }
 header.col { padding-top: 80px; }
-h1, h2, h3, th, .eyebrow, .fignum, .ctitle, .tag, .legend, .row, .axis, .heat, .scale, .notes h3 { font-family: Poppins, Arial, sans-serif; }
+h1, h2, h3, th, .eyebrow, .fignum, .ctitle, .tag, .legend, .row, .axis, .heat, .scale { font-family: Poppins, Arial, sans-serif; }
 .def { font-family: Lora, Georgia, serif; font-style: italic; }
 h1 { font-size: 42px; line-height: 1.2; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 22px; }
 h2 { font-size: 26px; line-height: 1.3; font-weight: 500; letter-spacing: -0.01em; margin: 72px 0 16px; }
@@ -38,7 +38,6 @@ h2 { font-size: 26px; line-height: 1.3; font-weight: 500; letter-spacing: -0.01e
 .lead { font-size: 20px; line-height: 1.6; color: var(--ink2); margin: 0; }
 p { margin: 0 0 16px; }
 a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
-sup a { text-decoration: none; color: var(--accent); font-size: 12px; }
 
 .def { font-size: 22px; line-height: 1.55; font-weight: 400; border-left: 3px solid var(--accent); padding: 2px 0 2px 20px; margin: 28px 0; }
 .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 20px; font-size: 15px; line-height: 1.6; }
@@ -89,11 +88,13 @@ figure { margin: 36px 0 0; }
 .scale { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-top: 10px; }
 .scale .ramp { width: 160px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, var(--surface), color-mix(in srgb, var(--neg) 70%, var(--surface))); }
 
-.notes { margin-top: 80px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); line-height: 1.65; padding-bottom: 80px; }
-.notes h3 { font-size: 12.5px; font-weight: 600; margin: 0 0 8px; color: var(--ink2); letter-spacing: 0.03em; text-transform: uppercase; }
-.notes ol { padding-left: 20px; margin: 0; }
-.notes li { margin-bottom: 6px; }
-.notes a { color: var(--muted); }
+.aside { font-style: italic; color: var(--ink2); font-size: 16px; margin: 64px 0 0; }
+.footnotes { margin: 48px 0 0; padding: 64px 0 96px; border-top: 1px solid var(--fg); font-family: Lora, Georgia, serif; }
+.footnotes h2 { font-family: Lora, Georgia, serif; font-size: 18px; font-weight: 500; letter-spacing: 0; margin: 0; }
+.footnotes .list { display: flex; flex-direction: column; gap: 32px; margin-top: 32px; }
+.footnotes p { position: relative; padding-left: 24px; margin: 0; font-size: 15px; line-height: 1.6; }
+.footnotes p sup { position: absolute; left: 0; top: 0.35em; font-size: 11px; line-height: 1; }
+.footnotes a { color: inherit; text-decoration-color: currentColor; text-decoration-thickness: 0.08em; }
 @media (max-width: 600px) {
   body { font-size: 16px; }
   header.col { padding-top: 48px; }
@@ -131,7 +132,7 @@ figure { margin: 36px 0 0; }
 
 <section class="col">
   <h2>Related work</h2>
-  <p>Public work on sycophancy and pushback, with the domain each covers and how it is evaluated.<sup><a href="#n1">1</a></sup></p>
+  <p>Public work on sycophancy and pushback, with the domain each covers and how it is evaluated.¹</p>
 </section>
 <div class="wide">
 <div class="scroll">
@@ -160,7 +161,7 @@ figure { margin: 36px 0 0; }
 <figure>
   <div class="fignum">Figure 1</div>
   <div class="ctitle">Does the model push back on a false premise?</div>
-  <div class="csub">BullshitBench v2, 100 prompts, latest model from each lab, sorted by clear pushback<sup><a href="#n2">2</a></sup></div>
+  <div class="csub">BullshitBench v2, 100 prompts, latest model from each lab, sorted by clear pushback.²</div>
   <div class="legend">
     <span><i class="s0"></i>Clear pushback</span>
     <span><i class="s1"></i>Flags the issue but goes along</span>
@@ -174,7 +175,7 @@ figure { margin: 36px 0 0; }
 <figure>
   <div class="fignum">Figure 2</div>
   <div class="ctitle">How much does a wrong user suggestion hurt agent performance?</div>
-  <div class="csub">XYEval, relative change in task score after a plausible but wrong suggestion is added<sup><a href="#n3">3</a></sup></div>
+  <div class="csub">XYEval, relative change in task score after a plausible but wrong suggestion is added.³</div>
   <div class="scroll"><table class="heat" id="xy" aria-label="Heatmap of XYEval relative score change per model and benchmark"></table></div>
   <div class="scale"><span>0%</span><span class="ramp"></span><span>−47%</span></div>
   <p class="cap">Every model loses ground. Claude Opus 4.8 is the most robust, with an average drop of 11%. Gemini 3.1 Pro is the least robust, falling 47% on Terminal-Bench. A system prompt that warns about misleading suggestions narrowed that Terminal-Bench drop to 18%.</p>
@@ -182,15 +183,16 @@ figure { margin: 36px 0 0; }
 </div>
 
 <section class="col">
-  <div class="notes">
-    <h3>Notes</h3>
-    <ol>
-      <li id="n1">Inclusion: each entry has public code or a public leaderboard. Academic work without released code is left out. Domains and methods come from each paper's abstract or repository.</li>
-      <li id="n2">From the BullshitBench <a href="https://github.com/petergpt/bullshit-benchmark/blob/main/data/v2/latest/leaderboard.csv">leaderboard.csv</a> (v2.1.7, November 11, 2026). Each rate is the count divided by prompts minus refusals, matching the official dashboard. Each model is shown at its best reasoning setting, and rounding means segments may not sum to 100%. All 250 configurations are in the <a href="https://petergpt.github.io/bullshit-benchmark/viewer/index.html">viewer</a>.</li>
-      <li id="n3">From Table 1 of the <a href="https://arxiv.org/html/2609.23939v1">XYEval paper</a>. The average column is the plain mean of the six suites, computed for this page. The mitigation result is from the paper's Table 3. The paper's five models are older than those in Figure 1, so the two figures are not directly comparable.</li>
-      <li>Researched and written with AI assistance: Claude for search, checking and writing, and Grok for searching X. Corrections are welcome as <a href="https://github.com/zedong-peng/llm-pushback-survey/issues">issues</a>.</li>
-    </ol>
-  </div>
+  <p class="aside">Researched and written with AI assistance: Claude for search, checking and writing, and Grok for searching X. Corrections are welcome as <a href="https://github.com/zedong-peng/llm-pushback-survey/issues">issues</a>.</p>
+
+  <section class="footnotes" id="footnotes">
+    <h2>Footnotes</h2>
+    <div class="list">
+      <p><sup>1</sup> Each entry has public code or a public leaderboard; academic work without released code is left out. Domains and methods come from each paper's abstract or repository.</p>
+      <p><sup>2</sup> From the BullshitBench <a href="https://github.com/petergpt/bullshit-benchmark/blob/main/data/v2/latest/leaderboard.csv">leaderboard.csv</a> (v2.1.7, November 11, 2026). Each rate is the count divided by prompts minus refusals, matching the official dashboard. Each model is shown at its best reasoning setting, and rounding means segments may not sum to 100%. All 250 configurations are in the <a href="https://petergpt.github.io/bullshit-benchmark/viewer/index.html">viewer</a>.</p>
+      <p><sup>3</sup> From Table 1 of the <a href="https://arxiv.org/html/2609.23939v1">XYEval paper</a>. The average column is the plain mean of the six suites, computed for this page. The mitigation result is from the paper's Table 3. The paper's five models are older than those in Figure 1, so the two figures are not directly comparable.</p>
+    </div>
+  </section>
 </section>
 
 </main>
