@@ -123,7 +123,7 @@ figure { margin: 48px 0 0; }
 
   <figure>
     <div class="ctitle">Does the model push back on a false premise?</div>
-    <div class="small">BullshitBench v2, 100 prompts, all 28 models run at max reasoning, sorted by clear pushback.²</div>
+    <div class="small">BullshitBench v2, 100 prompts, major current models at their highest reasoning setting, sorted by clear pushback.²</div>
     <div class="legend small">
       <span><i class="s0"></i>Clear pushback</span>
       <span><i class="s1"></i>Flags the issue but goes along</span>
@@ -142,7 +142,7 @@ figure { margin: 48px 0 0; }
   <section class="footnotes" id="footnotes">
     <div class="title">Footnotes</div>
     <p><sup>1</sup> Each entry has public code or a public leaderboard; academic work without released code is left out. Domains and methods come from each paper's abstract or repository.</p>
-    <p><sup>2</sup> From the BullshitBench <a href="https://github.com/petergpt/bullshit-benchmark/blob/main/data/v2/latest/leaderboard.csv">leaderboard.csv</a> (v2.1.7, November 11, 2026). Each rate is the count divided by prompts minus refusals, matching the official dashboard. The chart matches the viewer's <a href="https://petergpt.github.io/bullshit-benchmark/viewer/index.next.html?reasoning=max&amp;excludeRefusals=1">max-reasoning view</a>; rounding means segments may not sum to 100%. All 250 configurations are in the <a href="https://petergpt.github.io/bullshit-benchmark/viewer/index.html">viewer</a>.</p>
+    <p><sup>2</sup> From the BullshitBench <a href="https://github.com/petergpt/bullshit-benchmark/blob/main/data/v2/latest/leaderboard.csv">leaderboard.csv</a> (v2.1.7, November 11, 2026). Each rate is the count divided by prompts minus refusals, matching the official dashboard. Each model is shown at the highest reasoning setting it was run with: max where available, otherwise xhigh or high. Hover a bar to see which. Rounding means segments may not sum to 100%. All 250 configurations are in the <a href="https://petergpt.github.io/bullshit-benchmark/viewer/index.html">viewer</a>.</p>
     <p><sup>3</sup> From Table 1 of the <a href="https://arxiv.org/html/2609.23939v1">XYEval paper</a>. The average column is the plain mean of the six suites, computed for this page. The two figures use different model sets and settings, so they are not directly comparable.</p>
     <p><sup>4</sup> Researched and written with AI assistance: Claude for search, checking and writing, and Grok for searching X. Corrections are welcome as <a href="https://github.com/zedong-peng/llm-pushback-survey/issues">issues</a>.</p>
   </section>
@@ -150,15 +150,15 @@ figure { margin: 48px 0 0; }
 
 </main>
 <script>
-// BullshitBench, reasoning=max [model, clear %, partial %, accepted %, refusals]
-const bsb = [["Claude Sonnet 5",79,18,3,1],["Claude Fable 5.1",74,19,7,14],["Claude Opus 4.7",74,15,11,0],["Claude Opus 5.5",69,29,2,10],["GPT-6 Astra",69,27,4,0],["Claude Fable 5.2",67,24,8,2],["GLM-5.3",66,24,10,0],["Kimi K3.1 Pro",60,35,5,0],["GPT-6.1 Sol",59,40,1,0],["GPT-6 Luna Pro",59,35,6,0],["Claude Haiku 5.5",58,34,8,1],["Claude Sonnet 5.5",58,34,8,0],["GPT-6 Luna",58,32,10,0],["Muse Ember",58,24,18,1],["GPT-6 Sol Pro",57,34,9,0],["DeepSeek V4.1 Flash",57,30,13,0],["Grok 4.6",56,27,17,0],["GPT-6 Sol",54,36,10,0],["GPT-5.6 Terra",54,34,12,0],["Ox Alpha (stealth)",54,33,13,0],["GPT-6.1 Terra",53,39,8,0],["Muse Wonder",53,29,18,1],["GPT-5.6 Sol",47,40,13,0],["GPT-5.6 Luna",41,41,18,0],["DeepSeek V4 Pro",35,28,37,0],["Gemini 3.7 Flash",31,21,48,0],["Qwen3.8 27B",29,41,30,0],["Qwen3.8 Max",27,42,31,0]];
+// BullshitBench, highest reasoning setting per model [model, reasoning, clear %, partial %, accepted %, refusals]
+const bsb = [["Claude Opus 4.8","xhigh",94,5,1,0],["Claude Fable 5.1","max",74,19,7,14],["Grok 4.7","xhigh",72,19,9,0],["Gemini 4 Carbon","high",72,11,17,0],["Claude Opus 5.5","max",69,29,2,10],["GPT-6 Astra","max",69,27,4,0],["Mistral Large 4","high",68,23,9,0],["Claude Fable 5.2","max",67,24,8,2],["GLM-5.3","max",66,24,10,0],["Gemini 4 Argon","high",65,20,15,0],["MiniMax M3","xhigh",64,22,14,0],["Kimi K3.1 Pro","max",60,35,5,0],["GPT-6.1 Sol","max",59,40,1,0],["Claude Sonnet 5.5","max",58,34,8,0],["Claude Haiku 5.5","max",58,34,8,1],["Muse Ember","max",58,24,18,1],["GPT-6 Sol Pro","max",57,34,9,0],["DeepSeek V4.1 Flash","max",57,30,13,0],["GPT-6.1 Terra","max",53,39,8,0],["DeepSeek V4 Pro","max",35,28,37,0],["Gemini 3.7 Flash","max",31,21,48,0],["Qwen3.8 Max","max",27,42,31,0]];
 const el = document.getElementById('bsb');
-for (const [name, a, b, c, ref] of bsb) {
+for (const [name, effort, a, b, c, ref] of bsb) {
   const row = document.createElement('div');
   row.className = 'row';
   const seg = (cls, v) => v > 0 ? `<span class="${cls}" style="flex:${v} 0 0"></span>` : '';
   row.innerHTML = `<div class="m">${name}</div><div class="bar">${seg('s0', a)}${seg('s1', b)}${seg('s2', c)}</div><div>${a}%</div>` +
-    `<div class="tip">${name} · clear ${a}% · goes along ${b}% · accepts ${c}%${ref ? ` · ${ref} refusals` : ''}</div>`;
+    `<div class="tip">${name} (${effort}) · clear ${a}% · goes along ${b}% · accepts ${c}%${ref ? ` · ${ref} refusals` : ''}</div>`;
   el.appendChild(row);
 }
 
