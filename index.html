@@ -55,7 +55,6 @@ figure { margin: 48px 0 0; }
 .row:hover .tip { display: block; }
 .axis { display: grid; grid-template-columns: 160px 1fr 44px; gap: 10px; margin-top: 4px; }
 .axis div:nth-child(2) { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 4px; }
-figure .small:last-child { margin-top: 14px; }
 
 .heat { min-width: 680px; table-layout: fixed; margin-top: 12px; }
 .heat th, .heat td { text-align: center; padding: 0; border: 0; }
@@ -131,21 +130,19 @@ figure .small:last-child { margin-top: 14px; }
     </div>
     <div id="bsb" role="img" aria-label="Stacked bar chart of BullshitBench results per model"></div>
     <div class="axis small"><div></div><div><span>0%</span><span>50%</span><span>100%</span></div><div></div></div>
-    <p class="small">Claude Opus 4.8 and Qwen3.8 Max tie at 95%. Newer is not always better: Claude Fable 5.2 scores 67%, down from 87% for Fable 5.1. Hover a bar for the reasoning setting and refusal count.</p>
   </figure>
 
   <figure>
     <div class="ctitle">How much does a wrong user suggestion hurt agent performance?</div>
     <div class="small">XYEval, relative change in task score after a plausible but wrong suggestion is added. Darker means a larger drop.³</div>
     <div class="scroll"><table class="heat" id="xy" aria-label="Heatmap of XYEval relative score change per model and benchmark"></table></div>
-    <p class="small">Every model loses ground. Claude Opus 4.8 is the most robust, with an average drop of 11%. Gemini 3.1 Pro is the least robust, falling 47% on Terminal-Bench. A system prompt that warns about misleading suggestions narrowed that Terminal-Bench drop to 18%.</p>
   </figure>
 
   <section class="footnotes" id="footnotes">
     <div class="title">Footnotes</div>
     <p><sup>1</sup> Each entry has public code or a public leaderboard; academic work without released code is left out. Domains and methods come from each paper's abstract or repository.</p>
     <p><sup>2</sup> From the BullshitBench <a href="https://github.com/petergpt/bullshit-benchmark/blob/main/data/v2/latest/leaderboard.csv">leaderboard.csv</a> (v2.1.7, November 11, 2026). Each rate is the count divided by prompts minus refusals, matching the official dashboard. Each model is shown at its best reasoning setting, and rounding means segments may not sum to 100%. All 250 configurations are in the <a href="https://petergpt.github.io/bullshit-benchmark/viewer/index.html">viewer</a>.</p>
-    <p><sup>3</sup> From Table 1 of the <a href="https://arxiv.org/html/2609.23939v1">XYEval paper</a>. The average column is the plain mean of the six suites, computed for this page. The mitigation result is from the paper's Table 3. The paper's five models are older than those in the BullshitBench figure, so the two figures are not directly comparable.</p>
+    <p><sup>3</sup> From Table 1 of the <a href="https://arxiv.org/html/2609.23939v1">XYEval paper</a>. The average column is the plain mean of the six suites, computed for this page. The paper's five models are older than those in the BullshitBench figure, so the two figures are not directly comparable.</p>
     <p><sup>4</sup> Researched and written with AI assistance: Claude for search, checking and writing, and Grok for searching X. Corrections are welcome as <a href="https://github.com/zedong-peng/llm-pushback-survey/issues">issues</a>.</p>
   </section>
 </section>
