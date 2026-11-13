@@ -7,104 +7,73 @@
 <meta name="description" content="Is there a benchmark for whether an LLM keeps its better recommendation when the user proposes a worse one? Problem definition, related work and current results, November 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
+/* One family, four sizes (40 / 24 / 18 / 15), two text colors, three data colors. */
 :root {
-  --bg: #faf9f5; --surface: #f0eee6; --fg: #141413; --ink2: #4d4c48; --muted: #87867f; --line: #e8e6dc;
-  --accent: #d97757;
+  --bg: #faf9f5; --fg: #141413; --muted: #73726c; --line: #e8e6dc;
   --pos: #6a9bcc; --mid: #dedbd0; --neg: #d97757;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #141413; --surface: #232320; --fg: #faf9f5; --ink2: #cfcdc4; --muted: #b0aea5; --line: #33322e;
-    --accent: #d97757;
-    --pos: #6a9bcc; --mid: #5e5d59; --neg: #d97757;
-  }
+  :root { --bg: #141413; --fg: #faf9f5; --muted: #9c9a92; --line: #33322e; --pos: #6a9bcc; --mid: #5e5d59; --neg: #d97757; }
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0; background: var(--bg); color: var(--fg);
-  font: 18px/1.7 Lora, Georgia, serif;
-}
+body { margin: 0; background: var(--bg); color: var(--fg); font: 18px/1.7 Lora, Georgia, serif; font-feature-settings: "lnum" 1, "pnum" 1; }
 .col { max-width: 720px; margin: 0 auto; padding: 0 20px; }
 .wide { max-width: 940px; margin: 0 auto; padding: 0 20px; }
-header.col { padding-top: 80px; }
-h1, h2, h3, th, .eyebrow, .fignum, .ctitle, .tag, .legend, .row, .axis, .heat, .scale { font-family: Poppins, Arial, sans-serif; }
-.def { font-family: Lora, Georgia, serif; font-style: italic; }
-h1 { font-size: 42px; line-height: 1.2; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 22px; }
-h2 { font-size: 26px; line-height: 1.3; font-weight: 500; letter-spacing: -0.01em; margin: 72px 0 16px; }
-.eyebrow { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
-.lead { font-size: 20px; line-height: 1.6; color: var(--ink2); margin: 0; }
-p { margin: 0 0 16px; }
-a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
-
-.def { font-size: 22px; line-height: 1.55; font-weight: 400; border-left: 3px solid var(--accent); padding: 2px 0 2px 20px; margin: 28px 0; }
-.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 20px; font-size: 15px; line-height: 1.6; }
-.pair > div { background: var(--surface); border-radius: 8px; padding: 14px 16px; }
-.pair .tag { font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 4px; letter-spacing: 0.02em; }
-.pair mark { background: none; color: var(--accent); font-weight: 600; }
+h1, h2 { font-weight: 500; margin: 0; }
+h1 { font-size: 40px; line-height: 1.2; letter-spacing: -0.01em; margin: 12px 0 32px; }
+h2 { font-size: 24px; line-height: 1.3; margin: 72px 0 20px; }
+p { margin: 0 0 20px; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 0.18em; text-decoration-thickness: 0.08em; }
+.small { font-size: 15px; line-height: 1.6; color: var(--muted); }
+header.col { padding-top: 88px; }
+q { font-style: italic; quotes: none; }
 
 .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.55; }
-th, td { padding: 12px 14px 12px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-th { font-size: 12.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; border-bottom: 1px solid var(--fg); }
-td small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
-.rel { min-width: 760px; }
-.rel td:first-child { width: 210px; font-weight: 600; }
-.rel td:first-child small { font-weight: 400; }
-.rel td:nth-child(2) { width: 170px; color: var(--ink2); }
-.cap { font-size: 14px; color: var(--muted); line-height: 1.6; margin-top: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.6; }
+th, td { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { font-weight: 400; color: var(--muted); border-bottom-color: var(--fg); }
+.rel { min-width: 760px; margin-top: 8px; }
+.rel td:first-child { width: 220px; }
+.rel td:first-child a { font-weight: 500; }
+.rel td:first-child span { display: block; color: var(--muted); }
+.rel td:nth-child(2) { width: 170px; }
 
-figure { margin: 36px 0 0; }
-.fignum { font-size: 12.5px; font-weight: 600; color: var(--accent); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
-.ctitle { font-weight: 600; font-size: 17px; margin-bottom: 2px; }
-.csub { font-size: 14px; color: var(--muted); margin-bottom: 14px; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink2); margin-bottom: 12px; }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
-.row { display: grid; grid-template-columns: 150px 1fr 44px; align-items: center; gap: 10px; height: 26px; position: relative; }
-.row .m { font-size: 13.5px; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+figure { margin: 48px 0 0; }
+.ctitle { font-weight: 500; margin-bottom: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 8px 0 14px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+.row { display: grid; grid-template-columns: 160px 1fr 44px; align-items: center; gap: 10px; height: 28px; position: relative; font-size: 15px; }
+.row .m { text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .row .bar { display: flex; height: 14px; gap: 2px; }
 .row .bar span:first-child { border-radius: 4px 0 0 4px; }
 .row .bar span:last-child { border-radius: 0 4px 4px 0; }
 .s0 { background: var(--pos); } .s1 { background: var(--mid); } .s2 { background: var(--neg); }
-.row .v { font-size: 13.5px; font-variant-numeric: tabular-nums; }
-.tip { display: none; position: absolute; left: 160px; top: 26px; z-index: 2; background: var(--fg); color: var(--bg); font-size: 12.5px; line-height: 1.5; padding: 6px 10px; border-radius: 6px; white-space: nowrap; pointer-events: none; }
+.tip { display: none; position: absolute; left: 170px; top: 28px; z-index: 2; background: var(--fg); color: var(--bg); font-size: 15px; padding: 4px 10px; border-radius: 6px; white-space: nowrap; pointer-events: none; }
 .row:hover .tip { display: block; }
-.row:hover .m { color: var(--fg); }
-.axis { display: grid; grid-template-columns: 150px 1fr 44px; gap: 10px; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.axis { display: grid; grid-template-columns: 160px 1fr 44px; gap: 10px; margin-top: 4px; }
 .axis div:nth-child(2) { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 4px; }
+figure .small:last-child { margin-top: 14px; }
 
-.heat { min-width: 640px; font-variant-numeric: tabular-nums; table-layout: fixed; }
-.heat th:first-child, .heat td:first-child { width: 132px; }
+.heat { min-width: 680px; table-layout: fixed; margin-top: 12px; }
 .heat th, .heat td { text-align: center; padding: 0; border: 0; }
-.heat th { padding: 0 2px 8px; text-transform: none; letter-spacing: 0; font-size: 12.5px; line-height: 1.3; vertical-align: bottom; border-bottom: 0; }
-.heat th:first-child, .heat td:first-child { text-align: right; padding-right: 12px; white-space: nowrap; color: var(--ink2); font-size: 13.5px; }
-.heat td.cell { font-size: 13px; height: 34px; border: 2px solid var(--bg); border-radius: 6px; position: relative; }
-.heat td.avg { font-weight: 600; }
-.heat th.avg { color: var(--fg); }
-.heat td.cell:hover { outline: 1.5px solid var(--fg); outline-offset: -2px; }
-.heat td.cell:hover .tip { display: block; left: 50%; top: 34px; transform: translateX(-50%); }
-.scale { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-top: 10px; }
-.scale .ramp { width: 160px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, var(--surface), color-mix(in srgb, var(--neg) 70%, var(--surface))); }
+.heat th { padding: 0 2px 8px; line-height: 1.3; vertical-align: bottom; }
+.heat th:first-child, .heat td:first-child { width: 140px; text-align: right; padding-right: 12px; white-space: nowrap; }
+.heat td.cell { height: 36px; border: 2px solid var(--bg); border-radius: 6px; position: relative; font-variant-numeric: tabular-nums; }
+.heat td.cell:hover .tip { display: block; left: 50%; top: 36px; transform: translateX(-50%); }
 
-.aside { font-style: italic; color: var(--ink2); font-size: 16px; margin: 64px 0 0; }
-.footnotes { margin: 48px 0 0; padding: 64px 0 96px; border-top: 1px solid var(--fg); font-family: Lora, Georgia, serif; }
-.footnotes h2 { font-family: Lora, Georgia, serif; font-size: 18px; font-weight: 500; letter-spacing: 0; margin: 0; }
-.footnotes .list { display: flex; flex-direction: column; gap: 32px; margin-top: 32px; }
-.footnotes p { position: relative; padding-left: 24px; margin: 0; font-size: 15px; line-height: 1.6; }
-.footnotes p sup { position: absolute; left: 0; top: 0.35em; font-size: 11px; line-height: 1; }
-.footnotes a { color: inherit; text-decoration-color: currentColor; text-decoration-thickness: 0.08em; }
+.footnotes { margin-top: 64px; padding: 56px 0 96px; border-top: 1px solid var(--fg); }
+.footnotes .title { font-weight: 500; margin-bottom: 28px; }
+.footnotes p { position: relative; padding-left: 24px; margin: 0 0 28px; font-size: 15px; line-height: 1.6; }
+.footnotes sup { position: absolute; left: 0; top: 0.45em; font-size: 11px; line-height: 1; }
 @media (max-width: 600px) {
-  body { font-size: 16px; }
+  body { font-size: 17px; }
   header.col { padding-top: 48px; }
   h1 { font-size: 32px; }
-  h2 { font-size: 24px; margin-top: 56px; }
-  .lead { font-size: 18px; }
-  .def { font-size: 20px; }
-  .pair { grid-template-columns: 1fr; }
-  .row, .axis { grid-template-columns: 112px 1fr 36px; gap: 8px; }
-  .row .m { font-size: 12px; }
+  h2 { font-size: 22px; margin-top: 56px; }
+  .row, .axis { grid-template-columns: 116px 1fr 40px; gap: 8px; }
   .tip { left: 0; }
 }
 </style>
@@ -113,21 +82,18 @@ figure { margin: 36px 0 0; }
 <main>
 
 <header class="col">
-  <div class="eyebrow">Survey · November 13, 2026</div>
+  <div class="small">November 13, 2026</div>
   <h1>Will your LLM stand up to a bad idea?</h1>
-  <p class="lead">When you work with an AI on technical decisions, the costly failure is often not a wrong answer. It is a model that recommends the better approach, then switches to agree with you the moment you suggest a worse one. I looked for a benchmark that measures this. None measures it directly, but two come close: BullshitBench and XYEval.</p>
+  <p>When you work with an AI on technical decisions, the costly failure is often not a wrong answer. It is a model that recommends the better approach, then switches to agree with you the moment you suggest a worse one. I looked for a benchmark that measures this. None measures it directly, but two come close: BullshitBench and XYEval.</p>
 </header>
 
 <section class="col">
   <h2>The question</h2>
   <p>You want to train a model to some target. The LLM proposes a few methods. You suggest one that works but is clearly less efficient, and the LLM immediately agrees with you. How do we measure that behavior?</p>
-  <p class="def">Your opinion is not evidence. If you add no new information, the model's judgment of which approach is better should not change.</p>
-  <p>That makes the test simple. Ask the same question twice, and add only the user's stated view the second time.</p>
-  <div class="pair">
-    <div><div class="tag">A · NEUTRAL</div>To train this model to the target accuracy on a single GPU, which is better: method 1 or method 2?</div>
-    <div><div class="tag">B · WITH A STATED VIEW</div>To train this model to the target accuracy on a single GPU, which is better: method 1 or method 2? <mark>I think method 2 is better.</mark></div>
-  </div>
-  <p>If the two judgments differ, that is sycophancy. The test needs no ground truth about which method is better, only whether the judgment moved. It also handles the case where the user is right: if method 2 really is better, the model should already pick it in version A.</p>
+  <p>Your opinion is not evidence. If you add no new information, the model's judgment of which approach is better should not change. That makes the test simple: ask the same question twice, and add only the user's stated view the second time.</p>
+  <p>Neutral: <q>To train this model to the target accuracy on a single GPU, which is better, method 1 or method 2?</q><br>
+  With a stated view: <q>To train this model to the target accuracy on a single GPU, which is better, method 1 or method 2? I think method 2 is better.</q></p>
+  <p>If the two judgments differ, that is sycophancy. The test needs no ground truth about which method is better, only whether the judgment moved. It also handles the case where the user is right: if method 2 really is better, the model should already pick it when asked neutrally.</p>
 </section>
 
 <section class="col">
@@ -139,77 +105,67 @@ figure { margin: 36px 0 0; }
 <table class="rel">
   <thead><tr><th>Work</th><th>Domain</th><th>Setup and evaluation</th></tr></thead>
   <tbody>
-    <tr><td><a href="https://github.com/petergpt/bullshit-benchmark">BullshitBench</a><small>Peter Gostev · open source · live leaderboard</small></td><td>Software, finance, law, medicine, physics</td><td>100 prompts that read like ordinary work requests but rest on a nonsensical premise. Three LLM judges grade each answer as clear pushback, partial challenge or accepted nonsense.</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2609.23939">XYEval</a><small>Google DeepMind · arXiv 2026 · open source</small></td><td>Code, terminal, tool use, customer-service agents, academic QA</td><td>Appends a plausible but wrong "I think…" suggestion to tasks from τ-Bench, SWE-bench, Terminal-Bench, MCP-Atlas and HLE. Each task is scored by its own grader and compared with the unmodified task.</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2505.23840">SYCON-Bench</a><small>EMNLP 2025 Findings · open source</small></td><td>Debate and other conversations</td><td>Multi-turn free-form dialogue in which the user keeps pressing a stance. Records the turn of the first flip and the number of flips.</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2608.26511">Sycophancy vs. Rational Updating</a><small>EMNLP 2026 Findings · open source</small></td><td>General</td><td>Two-turn setup in which the pushback either lacks support or contains real evidence. Measures yielding and justified updating separately.</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2310.13548">Towards Understanding Sycophancy</a><small>Anthropic · ICLR 2024</small></td><td>General free-form tasks</td><td>Compares answers with and without the user's stated view across four tasks, and shows that human preference data rewards sycophantic answers.</td></tr>
-    <tr><td><a href="https://github.com/lechmazur/sycophancy">lechmazur/sycophancy</a><small>Lech Mazur · open source</small></td><td>Everyday interpersonal disputes</td><td>The same dispute is told in the first person from each side. A model counts as sycophantic when it sides with both narrators.</td></tr>
-    <tr><td><a href="https://artificialanalysis.ai/evaluations/aa-personalitybench">AA-PersonalityBench</a><small>Artificial Analysis · live leaderboard</small></td><td>General writing style</td><td>Single-turn prompts, some written to invite flattery, with no pushback. LLM judges compare answers pairwise on 30 traits, one of which is "Sycophantic".</td></tr>
+    <tr><td><a href="https://github.com/petergpt/bullshit-benchmark">BullshitBench</a><span>Peter Gostev · open source · live leaderboard</span></td><td>Software, finance, law, medicine, physics</td><td>100 prompts that read like ordinary work requests but rest on a nonsensical premise. Three LLM judges grade each answer as clear pushback, partial challenge or accepted nonsense.</td></tr>
+    <tr><td><a href="https://arxiv.org/abs/2609.23939">XYEval</a><span>Google DeepMind · arXiv 2026 · open source</span></td><td>Code, terminal, tool use, customer-service agents, academic QA</td><td>Appends a plausible but wrong "I think…" suggestion to tasks from τ-Bench, SWE-bench, Terminal-Bench, MCP-Atlas and HLE. Each task is scored by its own grader and compared with the unmodified task.</td></tr>
+    <tr><td><a href="https://arxiv.org/abs/2505.23840">SYCON-Bench</a><span>EMNLP 2025 Findings · open source</span></td><td>Debate and other conversations</td><td>Multi-turn free-form dialogue in which the user keeps pressing a stance. Records the turn of the first flip and the number of flips.</td></tr>
+    <tr><td><a href="https://arxiv.org/abs/2608.26511">Sycophancy vs. Rational Updating</a><span>EMNLP 2026 Findings · open source</span></td><td>General</td><td>Two-turn setup in which the pushback either lacks support or contains real evidence. Measures yielding and justified updating separately.</td></tr>
+    <tr><td><a href="https://arxiv.org/abs/2310.13548">Towards Understanding Sycophancy</a><span>Anthropic · ICLR 2024</span></td><td>General free-form tasks</td><td>Compares answers with and without the user's stated view across four tasks, and shows that human preference data rewards sycophantic answers.</td></tr>
+    <tr><td><a href="https://github.com/lechmazur/sycophancy">lechmazur/sycophancy</a><span>Lech Mazur · open source</span></td><td>Everyday interpersonal disputes</td><td>The same dispute is told in the first person from each side. A model counts as sycophantic when it sides with both narrators.</td></tr>
+    <tr><td><a href="https://artificialanalysis.ai/evaluations/aa-personalitybench">AA-PersonalityBench</a><span>Artificial Analysis · live leaderboard</span></td><td>General writing style</td><td>Single-turn prompts, some written to invite flattery, with no pushback. LLM judges compare answers pairwise on 30 traits, one of which is "Sycophantic".</td></tr>
   </tbody>
 </table>
 </div>
-<p class="cap">Arena has no sycophancy leaderboard. Its <a href="https://arena.ai/blog/series-b">Alignment Index</a> tracks unauthorized actions, false attribution and deceptive task completion in agent sessions.</p>
+<p class="small" style="margin-top: 14px;">Arena has no sycophancy leaderboard. Its <a href="https://arena.ai/blog/series-b">Alignment Index</a> tracks unauthorized actions, false attribution and deceptive task completion in agent sessions.</p>
 </div>
 
 <section class="col">
   <h2>Where models stand</h2>
   <p>BullshitBench is the only live leaderboard in the table that covers current models. XYEval compares the same task with and without a wrong user suggestion, on five models.</p>
-</section>
 
-<div class="col">
-<figure>
-  <div class="fignum">Figure 1</div>
-  <div class="ctitle">Does the model push back on a false premise?</div>
-  <div class="csub">BullshitBench v2, 100 prompts, latest model from each lab, sorted by clear pushback.²</div>
-  <div class="legend">
-    <span><i class="s0"></i>Clear pushback</span>
-    <span><i class="s1"></i>Flags the issue but goes along</span>
-    <span><i class="s2"></i>Accepts the premise</span>
-  </div>
-  <div id="bsb" role="img" aria-label="Stacked bar chart of BullshitBench results per model"></div>
-  <div class="axis"><div></div><div><span>0%</span><span>50%</span><span>100%</span></div><div></div></div>
-  <p class="cap">Claude Opus 4.8 and Qwen3.8 Max tie at 95%. Newer is not always better: Claude Fable 5.2 scores 67%, down from 87% for Fable 5.1. Hover a bar for the reasoning setting and refusal count.</p>
-</figure>
+  <figure>
+    <div class="ctitle">Does the model push back on a false premise?</div>
+    <div class="small">BullshitBench v2, 100 prompts, latest model from each lab, sorted by clear pushback.²</div>
+    <div class="legend small">
+      <span><i class="s0"></i>Clear pushback</span>
+      <span><i class="s1"></i>Flags the issue but goes along</span>
+      <span><i class="s2"></i>Accepts the premise</span>
+    </div>
+    <div id="bsb" role="img" aria-label="Stacked bar chart of BullshitBench results per model"></div>
+    <div class="axis small"><div></div><div><span>0%</span><span>50%</span><span>100%</span></div><div></div></div>
+    <p class="small">Claude Opus 4.8 and Qwen3.8 Max tie at 95%. Newer is not always better: Claude Fable 5.2 scores 67%, down from 87% for Fable 5.1. Hover a bar for the reasoning setting and refusal count.</p>
+  </figure>
 
-<figure>
-  <div class="fignum">Figure 2</div>
-  <div class="ctitle">How much does a wrong user suggestion hurt agent performance?</div>
-  <div class="csub">XYEval, relative change in task score after a plausible but wrong suggestion is added.³</div>
-  <div class="scroll"><table class="heat" id="xy" aria-label="Heatmap of XYEval relative score change per model and benchmark"></table></div>
-  <div class="scale"><span>0%</span><span class="ramp"></span><span>−47%</span></div>
-  <p class="cap">Every model loses ground. Claude Opus 4.8 is the most robust, with an average drop of 11%. Gemini 3.1 Pro is the least robust, falling 47% on Terminal-Bench. A system prompt that warns about misleading suggestions narrowed that Terminal-Bench drop to 18%.</p>
-</figure>
-</div>
-
-<section class="col">
-  <p class="aside">Researched and written with AI assistance: Claude for search, checking and writing, and Grok for searching X. Corrections are welcome as <a href="https://github.com/zedong-peng/llm-pushback-survey/issues">issues</a>.</p>
+  <figure>
+    <div class="ctitle">How much does a wrong user suggestion hurt agent performance?</div>
+    <div class="small">XYEval, relative change in task score after a plausible but wrong suggestion is added. Darker means a larger drop.³</div>
+    <div class="scroll"><table class="heat" id="xy" aria-label="Heatmap of XYEval relative score change per model and benchmark"></table></div>
+    <p class="small">Every model loses ground. Claude Opus 4.8 is the most robust, with an average drop of 11%. Gemini 3.1 Pro is the least robust, falling 47% on Terminal-Bench. A system prompt that warns about misleading suggestions narrowed that Terminal-Bench drop to 18%.</p>
+  </figure>
 
   <section class="footnotes" id="footnotes">
-    <h2>Footnotes</h2>
-    <div class="list">
-      <p><sup>1</sup> Each entry has public code or a public leaderboard; academic work without released code is left out. Domains and methods come from each paper's abstract or repository.</p>
-      <p><sup>2</sup> From the BullshitBench <a href="https://github.com/petergpt/bullshit-benchmark/blob/main/data/v2/latest/leaderboard.csv">leaderboard.csv</a> (v2.1.7, November 11, 2026). Each rate is the count divided by prompts minus refusals, matching the official dashboard. Each model is shown at its best reasoning setting, and rounding means segments may not sum to 100%. All 250 configurations are in the <a href="https://petergpt.github.io/bullshit-benchmark/viewer/index.html">viewer</a>.</p>
-      <p><sup>3</sup> From Table 1 of the <a href="https://arxiv.org/html/2609.23939v1">XYEval paper</a>. The average column is the plain mean of the six suites, computed for this page. The mitigation result is from the paper's Table 3. The paper's five models are older than those in Figure 1, so the two figures are not directly comparable.</p>
-    </div>
+    <div class="title">Footnotes</div>
+    <p><sup>1</sup> Each entry has public code or a public leaderboard; academic work without released code is left out. Domains and methods come from each paper's abstract or repository.</p>
+    <p><sup>2</sup> From the BullshitBench <a href="https://github.com/petergpt/bullshit-benchmark/blob/main/data/v2/latest/leaderboard.csv">leaderboard.csv</a> (v2.1.7, November 11, 2026). Each rate is the count divided by prompts minus refusals, matching the official dashboard. Each model is shown at its best reasoning setting, and rounding means segments may not sum to 100%. All 250 configurations are in the <a href="https://petergpt.github.io/bullshit-benchmark/viewer/index.html">viewer</a>.</p>
+    <p><sup>3</sup> From Table 1 of the <a href="https://arxiv.org/html/2609.23939v1">XYEval paper</a>. The average column is the plain mean of the six suites, computed for this page. The mitigation result is from the paper's Table 3. The paper's five models are older than those in the BullshitBench figure, so the two figures are not directly comparable.</p>
+    <p><sup>4</sup> Researched and written with AI assistance: Claude for search, checking and writing, and Grok for searching X. Corrections are welcome as <a href="https://github.com/zedong-peng/llm-pushback-survey/issues">issues</a>.</p>
   </section>
 </section>
 
 </main>
 <script>
-// Figure 1: BullshitBench [model, reasoning, clear %, partial %, accepted %, refusals]
+// BullshitBench [model, reasoning, clear %, partial %, accepted %, refusals]
 const bsb = [["Claude Opus 4.8","none",95,4,1,0],["Qwen3.8 Max","minimal",95,3,2,0],["Claude Fable 5.1","low",87,11,2,11],["Mistral Large 4","none",80,13,7,0],["Grok 4.7","low",75,13,12,0],["Kimi K3","xhigh",74,20,6,0],["GLM-5.3","minimal",72,17,11,0],["Gemini 4 Carbon","high",72,11,17,0],["Claude Opus 5.5","low",69,26,4,9],["GPT-6 Astra","max",69,27,4,0],["Claude Fable 5.2","max",67,24,8,2],["Gemini 4 Argon","low",66,21,13,0],["GPT-6.1 Sol","low",65,28,7,0],["MiniMax M3","xhigh",64,22,14,0],["Kimi K3.1 Pro","max",60,35,5,0],["Claude Sonnet 5.5","low",60,32,8,0],["DeepSeek V4.1 Flash","max",57,30,13,0],["GPT-6.1 Terra","none",54,36,10,0]];
 const el = document.getElementById('bsb');
 for (const [name, effort, a, b, c, ref] of bsb) {
   const row = document.createElement('div');
   row.className = 'row';
   const seg = (cls, v) => v > 0 ? `<span class="${cls}" style="flex:${v} 0 0"></span>` : '';
-  row.innerHTML = `<div class="m">${name}</div><div class="bar">${seg('s0', a)}${seg('s1', b)}${seg('s2', c)}</div><div class="v">${a}%</div>` +
+  row.innerHTML = `<div class="m">${name}</div><div class="bar">${seg('s0', a)}${seg('s1', b)}${seg('s2', c)}</div><div>${a}%</div>` +
     `<div class="tip">${name} (${effort}) · clear ${a}% · goes along ${b}% · accepts ${c}%${ref ? ` · ${ref} refusals` : ''}</div>`;
   el.appendChild(row);
 }
 
-// Figure 2: XYEval Table 1, relative change (%)
+// XYEval Table 1, relative change (%)
 const suites = ["τ-Bench", "SWE-bench Verified", "SWE-bench Pro", "Terminal-Bench", "MCP-Atlas", "HLE"];
 const xy = [
   ["Claude Opus 4.8",  [-11.2, -16.1, -16.2,  -9.1,  -6.0,  -8.7]],
@@ -220,13 +176,13 @@ const xy = [
 ];
 const t = document.getElementById('xy');
 const fmt = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1) + '%';
-const shade = v => v >= 0 ? 'var(--surface)' : `color-mix(in srgb, var(--neg) ${Math.round(Math.min(-v, 47) / 47 * 70)}%, var(--surface))`;
-t.innerHTML = `<thead><tr><th></th>${suites.map(s => `<th>${s}</th>`).join('')}<th class="avg">Average</th></tr></thead>`;
+const shade = v => v >= 0 ? 'var(--line)' : `color-mix(in srgb, var(--neg) ${Math.round(Math.min(-v, 47) / 47 * 70)}%, var(--line))`;
+t.innerHTML = `<thead><tr><th></th>${suites.map(s => `<th>${s}</th>`).join('')}<th>Average</th></tr></thead>`;
 const body = document.createElement('tbody');
 for (const [m, vals] of xy) {
   const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
-  const cells = vals.map((v, i) => `<td class="cell" style="background:${shade(v)}">${fmt(v)}<div class="tip">${m} · ${suites[i]} · ${fmt(v)}</div></td>`).join('');
-  body.insertAdjacentHTML('beforeend', `<tr><td>${m}</td>${cells}<td class="cell avg" style="background:${shade(avg)}">${fmt(avg)}<div class="tip">${m} · mean of six suites · ${fmt(avg)}</div></td></tr>`);
+  const cell = (v, label) => `<td class="cell" style="background:${shade(v)}">${fmt(v)}<div class="tip">${m} · ${label} · ${fmt(v)}</div></td>`;
+  body.insertAdjacentHTML('beforeend', `<tr><td>${m}</td>${vals.map((v, i) => cell(v, suites[i])).join('')}${cell(avg, 'mean of six suites')}</tr>`);
 }
 t.appendChild(body);
 </script>
