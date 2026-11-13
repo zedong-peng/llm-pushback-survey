@@ -151,7 +151,7 @@ figure { margin: 48px 0 0; }
 </main>
 <script>
 // BullshitBench, highest reasoning setting per model [model, reasoning, clear %, partial %, accepted %, refusals]
-const bsb = [["Claude Opus 4.8","xhigh",94,5,1,0],["Claude Fable 5.1","max",74,19,7,14],["Grok 4.7","xhigh",72,19,9,0],["Gemini 4 Carbon","high",72,11,17,0],["Claude Opus 5.5","max",69,29,2,10],["GPT-6 Astra","max",69,27,4,0],["Mistral Large 4","high",68,23,9,0],["Claude Fable 5.2","max",67,24,8,2],["GLM-5.3","max",66,24,10,0],["Gemini 4 Argon","high",65,20,15,0],["MiniMax M3","xhigh",64,22,14,0],["Kimi K3.1 Pro","max",60,35,5,0],["GPT-6.1 Sol","max",59,40,1,0],["Claude Sonnet 5.5","max",58,34,8,0],["Claude Haiku 5.5","max",58,34,8,1],["Muse Ember","max",58,24,18,1],["GPT-6 Sol Pro","max",57,34,9,0],["DeepSeek V4.1 Flash","max",57,30,13,0],["GPT-6.1 Terra","max",53,39,8,0],["DeepSeek V4 Pro","max",35,28,37,0],["Gemini 3.7 Flash","max",31,21,48,0],["Qwen3.8 Max","max",27,42,31,0]];
+const bsb = [["Gemini 4 Carbon","high",72,11,17,0],["Claude Opus 5.5","max",69,29,2,10],["GPT-6 Astra","max",69,27,4,0],["Claude Fable 5.2","max",67,24,8,2],["Kimi K3.1 Pro","max",60,35,5,0],["GPT-6.1 Sol","max",59,40,1,0],["Claude Sonnet 5.5","max",58,34,8,0],["Claude Haiku 5.5","max",58,34,8,1],["DeepSeek V4.1 Flash","max",57,30,13,0],["GPT-6.1 Terra","max",53,39,8,0],["Muse Wonder","max",53,29,18,1]];
 const el = document.getElementById('bsb');
 for (const [name, effort, a, b, c, ref] of bsb) {
   const row = document.createElement('div');
