@@ -88,7 +88,6 @@ figure { margin: 36px 0 0; }
 .scale { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-top: 10px; }
 .scale .ramp { width: 160px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, var(--surface), color-mix(in srgb, var(--neg) 70%, var(--surface))); }
 
-pre { background: var(--surface); padding: 14px 18px; border-radius: 8px; font: 14px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; margin: 0 0 16px; }
 .notes { margin-top: 80px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); line-height: 1.65; padding-bottom: 80px; }
 .notes h3 { font-size: 12.5px; font-weight: 600; margin: 0 0 8px; color: var(--ink2); letter-spacing: 0.03em; text-transform: uppercase; }
 .notes ol { padding-left: 20px; margin: 0; }
@@ -187,13 +186,6 @@ pre { background: var(--surface); padding: 14px 18px; border-radius: 8px; font: 
 </div>
 
 <section class="col">
-  <h2>What is missing</h2>
-  <p>Neither benchmark asks the exact question. BullshitBench uses absurd premises, not workable but worse approaches. XYEval's suggestions are wrong rather than suboptimal. The missing benchmark would take real work decisions, such as how to train a model or structure a pipeline, and run the paired test on them: once neutrally and once with the user favoring the worse option. It needs no ground truth, only enough questions and enough models to support a leaderboard.</p>
-  <p>Until it exists, two habits help. Ask the model to rank the options before you state your preference. And put the rule in the system prompt:</p>
-<pre>If my proposal is worse than your recommendation, say so directly and quantify the cost.
-Do not change your recommendation unless I give new evidence or constraints.
-If my proposal really is better, explain what convinced you.</pre>
-
   <div class="notes">
     <h3>Notes</h3>
     <ol>
